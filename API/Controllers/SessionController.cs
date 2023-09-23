@@ -153,6 +153,7 @@ public class SessionController : BaseApiController
 
     }
 
+    [Authorize]
     [HttpPut("updateSession/{sessionId}")]
     public async Task<ActionResult<SessionDto>> UpdateSession(string sessionId, CreateSessionDto request)
     {
@@ -170,7 +171,10 @@ public class SessionController : BaseApiController
 
         await _context.SaveChangesAsync();
 
-        return _mapper.Map<SessionDto>(session);
+        await SetRefereshLinkTokenCookie(session);
+        var token = _tokenService.CreateAttendanceLinkToken(session);
+
+        return _mapper.Map<SessionDto>(session, opt => opt.Items["LinkToken"] = token);
     }
 
 }
