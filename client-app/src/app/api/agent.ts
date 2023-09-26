@@ -43,8 +43,10 @@ axios.interceptors.response.use(async (response: AxiosResponse) => {
     
   }, async (error: AxiosError) => {
 
-    if (!error.response)
-    return toast.error('Network error - make sure API is running!');
+    if (!error.response) {
+      toast.error('Network error - make sure API is running!');
+      return await Promise.reject(error);
+    }
 
     console.log("error, response ", error.response)
     
@@ -104,7 +106,6 @@ const Attendance = {
     createAttendee: (sessionId: string, accessToken: string, linkToken: string) => requests.post<Attendee>(`/attendance/createAttendee/${sessionId}?accessToken=${accessToken}&linkToken=${linkToken}`, {}),
     getAttendees: (sessionId: string, params?: URLSearchParams) => requests.get<Pagination<SessionAttendees>>(`/attendance/sessionAttendees/${sessionId}`, params),
     exportToCSV: (sessionId: string) => requests.get<Blob>(`/attendance/exportToCSV/${sessionId}`),
-    exportToPDF: (sessionId: string) => requests.get<Blob>(`/attendance/exportToPDF/${sessionId}`),
 };
 
 const Account = {

@@ -13,7 +13,7 @@ function UserProfile() {
     return () => {
       stopRefreshTokenTimer();
     };
-  }, [user]);
+  }, [user, localStorage.getItem("user")]);
 
   const refreshToken = async () => {
     stopRefreshTokenTimer();

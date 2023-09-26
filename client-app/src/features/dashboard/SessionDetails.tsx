@@ -7,7 +7,8 @@ import AppLoading from "../../app/components/AppLoading";
 import agent from "../../app/api/agent";
 import { MetaData } from "../../app/models/pagination";
 import { getAxiosParams } from "../../app/utils";
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow, format } from "date-fns";
+import axios from "axios";
 
 function SessionDetails() {
   const [sessionDetails, setSessionDetails] = useState<SessionAttendees>();
@@ -83,8 +84,15 @@ function SessionDetails() {
         link.click();
         link.remove();
       } else {
-        const response = await agent.Attendance.exportToPDF(id!);
-        const url = URL.createObjectURL(new Blob([response]));
+        axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+        let response = await axios.get(`/Attendance/ExportToPDF/${id}`, {
+          responseType: "arraybuffer",
+          headers: {
+            Accept: "application/pdf",
+          },
+        });
+
+        const url = URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
         link.setAttribute("download", sessionDetails?.sessionName! + ".pdf");
@@ -133,10 +141,25 @@ function SessionDetails() {
         <div className="flex items-center mt-4 md:mt-0">
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold text-gray-700">
-            {sessionDetails && format(new Date(sessionDetails.sessionExpiresAt), 'MMMM, EEEE do, h:mm a')}
+              {sessionDetails &&
+                format(
+                  new Date(sessionDetails.sessionExpiresAt),
+                  "MMMM, EEEE do, h:mm a"
+                )}
             </h1>
             <p className="text-sm font-medium text-gray-400">
-              Expires in 2 hours
+              expires in{" "}
+              {sessionDetails &&
+                (sessionDetails.status !== "Expired"
+                  ? formatDistanceToNow(
+                      new Date(sessionDetails.sessionExpiresAt)
+                    )
+                  : formatDistanceToNow(
+                      new Date(sessionDetails.sessionExpiresAt),
+                      {
+                        addSuffix: true,
+                      }
+                    ))}
             </p>
           </div>
         </div>
@@ -201,7 +224,9 @@ function SessionDetails() {
                         src="/images/clock.svg"
                       />
                     </div>
-                    <span>{formatDistanceToNow(new Date(attendee.createdAt))} ago</span>
+                    <span>
+                      {formatDistanceToNow(new Date(attendee.createdAt))} ago
+                    </span>
                   </div>
                 </td>
               </tr>

@@ -133,6 +133,12 @@ function Home() {
     }
   }
 
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("linkToken");
+    };
+  }, []);
+
   if (loading) return <AppLoading />;
 
   return (

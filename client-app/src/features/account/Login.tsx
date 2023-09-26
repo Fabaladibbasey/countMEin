@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginFormSchema } from "./accountFormSchema";
 import agent from "../../app/api/agent";
 import { User } from "../../app/models/user";
-import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate();

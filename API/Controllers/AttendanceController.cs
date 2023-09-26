@@ -139,14 +139,19 @@ public partial class AttendanceController : BaseApiController
 
     [Authorize]
     [HttpGet("ExportToPDF/{sessionId}")]
-    public async Task<IActionResult> ExportToPdf(string sessionId)
+    public async Task<FileResult> ExportToPdf(string sessionId)
     {
-        // create a new PDF document
-        var pdf = new PdfDocument();
 
-        // get the date session was created and also get the list of attendees
-        var createdOn = _context.Sessions.OrderByDescending(x => x.CreatedAt).FirstOrDefault().CreatedAt.ToString("dd/MM/yyyy");
-        var attendees = await _context.Attendees.ToListAsync();
+        var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+        var session = await _context.Sessions
+            .Include(x => x.Attendees)
+            .Include(x => x.Host)
+            .Where(x => x.Id == Guid.Parse(sessionId))
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+
+        var pdf = new PdfDocument();
 
         // font definitions
         var normalFont = new XFont("Arial", 14);
@@ -156,7 +161,7 @@ public partial class AttendanceController : BaseApiController
         // page configuration
         int currentAttendeeIndex = 0;
         int attendeesPerPage = 25;
-        int totalPages = (int)Math.Ceiling((double)attendees.Count / attendeesPerPage);
+        int totalPages = (int)Math.Ceiling((double)session.AttendeesCount / attendeesPerPage);
 
         // loop through the total number of pages
         for (int pageIdx = 0; pageIdx < totalPages; pageIdx++)
@@ -178,7 +183,7 @@ public partial class AttendanceController : BaseApiController
 
             // Header
             gfx.DrawString("Attendees", headerFont, XBrushes.Black, new XRect(0, yPos, page.Width, page.Height), XStringFormats.TopCenter);
-            gfx.DrawString(createdOn, headerFont, XBrushes.Black, new XRect(0, yPos, page.Width - 20, page.Height), XStringFormats.TopRight);
+            gfx.DrawString(session.CreatedAt.ToString("dd/MM/yyyy"), headerFont, XBrushes.Black, new XRect(0, yPos, page.Width - 20, page.Height), XStringFormats.TopRight);
             yPos += 50;
 
             // Column headers
@@ -194,9 +199,9 @@ public partial class AttendanceController : BaseApiController
             yPos += 5;
 
             // loop through the attendees for the current page
-            for (int i = 0; i < attendeesPerPage && currentAttendeeIndex < attendees.Count; i++)
+            for (int i = 0; i < attendeesPerPage && currentAttendeeIndex < session.Attendees.Count; i++)
             {
-                var attendee = attendees[currentAttendeeIndex];
+                var attendee = session.Attendees[currentAttendeeIndex];
 
                 gfx.DrawString($"{currentAttendeeIndex + 1}", normalFont, XBrushes.Black, new XRect(5, yPos, numberColumnWidth, page.Height), XStringFormats.TopLeft);
                 gfx.DrawString($"{attendee.FirstName}", normalFont, XBrushes.Black, new XRect(30, yPos, columnWidth, page.Height), XStringFormats.TopLeft);
@@ -216,10 +221,13 @@ public partial class AttendanceController : BaseApiController
         pdf.Save(pdfStream, false);
         pdfStream.Seek(0, SeekOrigin.Begin);
 
-        return File(pdfStream, "application/pdf", "Attendees.pdf");
+        var fileBytes = pdfStream.ToArray();
+
+        return File(fileBytes, "application/pdf", session.SessionName + ".pdf", true);
     }
 
 
+    [Authorize]
     [HttpGet("ExportToCSV/{sessionId}")]
     public async Task<ActionResult> SaveToCSV(string sessionId)
     {
@@ -245,7 +253,7 @@ public partial class AttendanceController : BaseApiController
 
         var csvBtes = Encoding.UTF8.GetBytes(csvData.ToString());
 
-        return File(csvBtes, "text/csv", "Attendees.csv");
+        return File(csvBtes, "text/csv", session.SessionName + ".csv");
     }
 }
 
