@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { Session } from "../../app/models/session";
 import { useLocation } from "react-router-dom";
 import AppLoading from "../../app/components/AppLoading";
+import { format } from "date-fns";
 
 function CurrentSession() {
   const [session, setSession] = useState<Session | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const { state } = useLocation();
+  let refreshTokenTimeout: any;
 
   const [hostURL, setHostURL] = useState("");
 
@@ -32,25 +34,37 @@ function CurrentSession() {
 
   useEffect(() => {
     if (session && session.regenerateLinkToken) {
-      var interval = setInterval(async () => {
-        try {
-          const result = await agent.Session.refreshLinkToken(
-            session.sessionId
-          );
-          setSession(result);
-          console.log("====================================");
-          console.log("refreshed link token!", result);
-          console.log("====================================");
-        } catch (error) {
-          console.log(error);
-        }
-      }, session.linkExpiryFreequency * 1000 - 1000);
+      refreshLinkTokenTimer(session);
     }
 
     return () => {
-      clearInterval(interval);
+      stopRefreshTokenTimer();
     };
   }, [session]);
+
+  const refreshLinkToken = async () => {
+    stopRefreshTokenTimer();
+    try {
+      const result = await agent.Session.refreshLinkToken(session?.sessionId!);
+      if (result) {
+        setSession(result);
+        refreshLinkTokenTimer(result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const refreshLinkTokenTimer = (session: Session) => {
+    refreshTokenTimeout = setTimeout(
+      refreshLinkToken,
+      session.linkExpiryFreequency * 1000 - 2000
+    );
+  };
+
+  const stopRefreshTokenTimer = () => {
+    clearTimeout(refreshTokenTimeout);
+  };
 
   useEffect(() => {
     if (isCopied) {
@@ -75,8 +89,8 @@ function CurrentSession() {
       }
     };
 
-    if (state && state.from) {
-      setSession(state.from);
+    if (state && state.session) {
+      setSession(state.session);
     } else {
       getCurrentSession();
     }
@@ -94,7 +108,11 @@ function CurrentSession() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{session.sessionName}</h2>
               <span className="text-sm text-gray-400">
-                Expires at {session.sessionExpiresAt.toString()}
+                Expires at{" "}
+                {format(
+                  new Date(session.sessionExpiresAt),
+                  "MMMM, EEEE do, h:mm a"
+                )}
               </span>
             </div>
           </>
