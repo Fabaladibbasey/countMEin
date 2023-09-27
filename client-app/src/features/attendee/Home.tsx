@@ -128,6 +128,11 @@ function Home() {
     }
   }
 
+  function exitPageOnSave() {
+    localStorage.removeItem("linkToken");
+    window.close();
+  }
+
   if (loading) return <AppLoading />;
 
   return (
@@ -177,10 +182,7 @@ function Home() {
         {attendee ? (
           <div className="flex justify-center space-x-4 my-4">
             <button
-              onClick={() => {
-                localStorage.removeItem("linkToken");
-                navigate(-1);
-              }}
+              onClick={exitPageOnSave}
               className="my-4 bg-slate-500 hover:bg-slate-700 text-white text-base rounded-lg py-2.5 px-5 transition-colors w-full text-[19px]"
             >
               Save To Exit Page
