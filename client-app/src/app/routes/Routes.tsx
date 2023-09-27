@@ -62,6 +62,10 @@ export const Routes: RouteObject[] = [
               },
             ],
           },
+          {
+            path: "/session-details/:id",
+            element: <SessionDetails />,
+          },
         ],
       },
 
@@ -72,16 +76,12 @@ export const Routes: RouteObject[] = [
             path: "/test-errors",
             element: <TestErrors />,
           },
-          {
-            path: "/server-error",
-            element: <ServerError />,
-          },
         ],
       },
 
       {
-        path: "/session-details/:id",
-        element: <SessionDetails />,
+        path: "/server-error",
+        element: <ServerError />,
       },
       {
         path: "*",

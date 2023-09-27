@@ -12,9 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PdfSharpCore.Drawing;
 using static Google.Apis.Auth.GoogleJsonWebSignature;
-using PdfSharp.Pdf;
-using PdfSharp.Drawing;
 
 namespace API.Controllers;
 
@@ -151,7 +150,7 @@ public partial class AttendanceController : BaseApiController
             .AsNoTracking()
             .FirstOrDefaultAsync();
 
-        var pdf = new PdfDocument();
+        var pdf = new PdfSharpCore.Pdf.PdfDocument();
 
         // font definitions
         var normalFont = new XFont("Arial", 14);

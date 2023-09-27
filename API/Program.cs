@@ -48,15 +48,40 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
         builder => builder
-        .WithOrigins("http://localhost:5173")
+        .WithOrigins("http://localhost:5173", "https://localhost:7231")
         .AllowAnyMethod()
         .AllowCredentials()
         .AllowAnyHeader()
         .WithExposedHeaders("WWW-Authenticate", "Pagination"));
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+string connString;
+if (builder.Environment.IsDevelopment())
+    connString = builder.Configuration.GetConnectionString("DefaultConnection");
+else
+{
+    // Use connection string provided at runtime by FlyIO.
+    var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+    // Parse connection URL to connection string for Npgsql
+    connUrl = connUrl.Replace("postgres://", string.Empty);
+    string pgUserPass = connUrl.Split("@")[0];
+    string pgHostPortDb = connUrl.Split("@")[1];
+    string pgHostPort = pgHostPortDb.Split("/")[0];
+    string pgDb = pgHostPortDb.Split("/")[1];
+    string pgUser = pgUserPass.Split(":")[0];
+    string pgPass = pgUserPass.Split(":")[1];
+    string pgHost = pgHostPort.Split(":")[0];
+    string pgPort = pgHostPort.Split(":")[1];
+    string updatedHost = pgHost.Replace("flycast", "internal");
+
+    connString = $"Server={updatedHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}";
+}
+
+builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+{
+    opt.UseNpgsql(connString);
+});
 
 builder.Services.AddIdentityCore<AppUser>(options =>
 {
@@ -94,6 +119,21 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
+//security headers
+app.UseXContentTypeOptions();
+app.UseReferrerPolicy(opt => opt.NoReferrer());
+app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
+app.UseXfo(opt => opt.Deny());
+
+app.UseCsp(opt => opt
+    .BlockAllMixedContent()
+    .StyleSources(s => s.Self().CustomSources("https://accounts.google.com/gsi/style", "sha256-2B6D2cgxXR6e7ocmg13tWpNPBrKNcPH7zmj+c3HcrQY=", "sha256-lmto2U1o7YINyHPg9TOCjIt+o5pSFNU/T2oLxDPF+uw="))
+    .FontSources(s => s.Self())
+    .FormActions(s => s.Self())
+    .FrameAncestors(s => s.Self())
+    .ImageSources(s => s.Self().CustomSources("https://lh3.googleusercontent.com"))
+    .ScriptSources(s => s.Self().CustomSources("https://accounts.google.com/gsi/client")));
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -103,6 +143,16 @@ if (app.Environment.IsDevelopment())
         c.ConfigObject.AdditionalItems.Add("persistAuthorization", true);
     });
 }
+else
+{
+    // app.UseHsts(); for some reason this have not been working
+    app.Use(async (context, next) =>
+    {
+        context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
+        await next();
+    });
+}
+
 app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();

@@ -112,7 +112,7 @@ function Login() {
                 To Log Attendance{" "}
               </p>
               <button className="mt-4 bg-slate-500 hover:bg-slate-700 text-white text-base rounded-lg py-2.5 px-5 transition-colors w-full text-[19px]">
-                Scan QR Code
+                Scan QR Code <span className="ml-2">📱</span>
               </button>
             </div>
             <h3 className="font-semibold text-xl text-gray-800 mb-2 ">

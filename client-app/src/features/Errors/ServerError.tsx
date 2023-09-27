@@ -1,15 +1,8 @@
-import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function ServerError() {
   const navigate = useNavigate();
   const { state } = useLocation();
-
-  useEffect(() => {
-    console.log("State================================");
-    console.log(state);
-    console.log("====================================");
-  }, [state]);
 
   if (!state) return null;
 

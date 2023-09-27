@@ -121,11 +121,6 @@ function Home() {
 
       setAttendee(newAttendee);
       toast.success("You have successfully registered for this session!");
-      setTimeout(() => {
-        localStorage.removeItem("linkToken");
-        localStorage.removeItem("attendee");
-        navigate(-1);
-      }, 5000);
     } catch (error) {
       console.log(error);
     } finally {
@@ -133,11 +128,10 @@ function Home() {
     }
   }
 
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem("linkToken");
-    };
-  }, []);
+  function exitPageOnSave() {
+    localStorage.removeItem("linkToken");
+    window.close();
+  }
 
   if (loading) return <AppLoading />;
 
@@ -188,10 +182,7 @@ function Home() {
         {attendee ? (
           <div className="flex justify-center space-x-4 my-4">
             <button
-              onClick={() => {
-                localStorage.removeItem("linkToken");
-                navigate(-1);
-              }}
+              onClick={exitPageOnSave}
               className="my-4 bg-slate-500 hover:bg-slate-700 text-white text-base rounded-lg py-2.5 px-5 transition-colors w-full text-[19px]"
             >
               Save To Exit Page
@@ -233,7 +224,7 @@ function Home() {
               </div>
             </div>
             <button className="my-4 bg-slate-500 hover:bg-slate-700 text-white text-base rounded-lg py-2.5 px-5 transition-colors w-full text-[19px]">
-              Scan QR Code
+              Scan QR Code Again
             </button>
           </>
         )}

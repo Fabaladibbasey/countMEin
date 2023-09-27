@@ -96,7 +96,7 @@ public class TokenService
         return new RefereshLinkToken
         {
             Token = Convert.ToBase64String(randomNumber),
-            Expires = session.RegenerateLinkToken ? DateTime.Now.AddSeconds(session.LinkExpiryFreequency) : session.SessionExpiresAt
+            Expires = session.RegenerateLinkToken ? DateTime.UtcNow.AddSeconds(session.LinkExpiryFreequency) : session.SessionExpiresAt
         };
     }
 
