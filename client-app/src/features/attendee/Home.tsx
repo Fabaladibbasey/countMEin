@@ -121,23 +121,12 @@ function Home() {
 
       setAttendee(newAttendee);
       toast.success("You have successfully registered for this session!");
-      setTimeout(() => {
-        localStorage.removeItem("linkToken");
-        localStorage.removeItem("attendee");
-        navigate(-1);
-      }, 5000);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem("linkToken");
-    };
-  }, []);
 
   if (loading) return <AppLoading />;
 
@@ -233,7 +222,7 @@ function Home() {
               </div>
             </div>
             <button className="my-4 bg-slate-500 hover:bg-slate-700 text-white text-base rounded-lg py-2.5 px-5 transition-colors w-full text-[19px]">
-              Scan QR Code
+              Scan QR Code Again
             </button>
           </>
         )}

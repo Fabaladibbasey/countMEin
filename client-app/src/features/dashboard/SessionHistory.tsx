@@ -8,7 +8,7 @@ import AppLoading from "../../app/components/AppLoading";
 import { MetaData } from "../../app/models/pagination";
 import { getAxiosParams } from "../../app/utils";
 import { confirmAlert } from "react-confirm-alert";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 function SessionHistory() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -148,22 +148,28 @@ function SessionHistory() {
                         src="/images/clock.svg"
                       />
                     </div>
-                    <span> {format(new Date(session.sessionExpiresAt), 'MMMM, EEEE do, h:mm a')} </span>
+                    <span>
+                      {" "}
+                      {format(
+                        new Date(session.sessionExpiresAt),
+                        "MMMM, EEEE do, h:mm a"
+                      )}{" "}
+                    </span>
                   </div>
                 </td>
                 <td className="py-3 px-6 text-center">
                   <div className="flex items-center justify-center">
                     <img
                       className="w-6 h-6 rounded-full border-gray-200 border transform hover:scale-125"
-                      src="https://randomuser.me/api/portraits/men/1.jpg"
+                      src="/images/person.png"
                     />
                     <img
                       className="w-6 h-6 rounded-full border-gray-200 border -m-1 transform hover:scale-125"
-                      src="https://randomuser.me/api/portraits/women/2.jpg"
+                      src="/images/person.png"
                     />
                     <img
                       className="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
-                      src="https://randomuser.me/api/portraits/men/3.jpg"
+                      src="/images/person.png"
                     />
                     <p className="flex items-center justify-center w-8 h-8 -mx-1 text-xs text-slate-700 bg-gray-200 border-2 border-white rounded-full">
                       {session.attendeesCount > 3
