@@ -11,6 +11,7 @@ primary_region = "lhr"
 
 [env]
 ASPNETCORE_URLS="http://+:8080"
+Google__ClientId="559758667407-k0a5jbbmsabs5v5e6carbuj4md1tluao.apps.googleusercontent.com"
 
 [http_service]
   internal_port = 8080
