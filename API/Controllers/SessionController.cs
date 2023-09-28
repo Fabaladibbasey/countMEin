@@ -196,11 +196,14 @@ public class SessionController : BaseApiController
         if (session == null) return Unauthorized();
 
         session.SessionName = request.SessionName;
-        session.SessionExpiresAt = request.SessionExpiresAt;
+        session.SessionExpiresAt = request.SessionExpiresAt.ToUniversalTime();
         session.LinkExpiryFreequency = request.LinkExpiryFreequency < 30 ? 30 : request.LinkExpiryFreequency;
         session.RegenerateLinkToken = request.RegenerateLinkToken;
 
-        await _context.SaveChangesAsync();
+        _context.Update(session);
+        var updated = await _context.SaveChangesAsync() > 0;
+
+        if (!updated) return BadRequest("Failed to update session");
 
         await SetRefereshLinkTokenCookie(session);
         var token = _tokenService.CreateAttendanceLinkToken(session);

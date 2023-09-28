@@ -125,9 +125,9 @@ app.UseReferrerPolicy(opt => opt.NoReferrer());
 app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
 app.UseXfo(opt => opt.Deny());
 
-app.UseCsp(opt => opt
+app.UseCspReportOnly(opt => opt
     .BlockAllMixedContent()
-    .StyleSources(s => s.Self().CustomSources("https://accounts.google.com/gsi/style", "sha256-2B6D2cgxXR6e7ocmg13tWpNPBrKNcPH7zmj+c3HcrQY=", "sha256-lmto2U1o7YINyHPg9TOCjIt+o5pSFNU/T2oLxDPF+uw="))
+    // .StyleSources(s => s.Self().CustomSources("https://accounts.google.com/gsi/style", "sha256-2B6D2cgxXR6e7ocmg13tWpNPBrKNcPH7zmj+c3HcrQY=", "sha256-lmto2U1o7YINyHPg9TOCjIt+o5pSFNU/T2oLxDPF+uw="))
     .FontSources(s => s.Self())
     .FormActions(s => s.Self())
     .FrameAncestors(s => s.Self())
