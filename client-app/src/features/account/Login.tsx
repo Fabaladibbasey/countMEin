@@ -90,7 +90,7 @@ function Login() {
       <div className="bg-purple-900 absolute top-0 left-0 bg-gradient-to-b from-gray-500 via-gray-500 to-slate-700 bottom-0 leading-5 h-full w-full overflow-hidden"></div>
 
       <div className="relative min-h-screen  sm:flex sm:flex-row  justify-center bg-transparent rounded-3xl shadow-xl">
-        <div className="flex-col flex  self-center lg:px-14 sm:max-w-4xl xl:max-w-md  z-10">
+        <div className="flex-col flex  self-center lg:px-14 w-[28rem] sm:max-w-4xl xl:max-w-md  z-10">
           <div className=" self-start hidden lg:flex flex-col  text-gray-300">
             <h1 className="my-3 font-semibold text-4xl">
               Revolutionize Attendance Tracking with Count Me In!
@@ -99,9 +99,11 @@ function Login() {
               Say goodbye to traditional methods and hello to easy attendance
               management. Designed with University of The Gambia lecturers in
               mind, Count Me In streamlines the process. Now, students can log
-              their attendance without interference, promoting fairness. The
-              rule is simple: be present and scan the QR code. Join the
-              attendance revolution today!
+              their attendance without interference, promoting fairness.
+              <span className="inline-block">
+                The rule is simple: be present and scan the QR code. Join the
+                attendance revolution today!
+              </span>
             </p>
           </div>
         </div>
@@ -148,7 +150,7 @@ function Login() {
                       {showPassword ? (
                         <svg
                           onClick={() => setShowPassword(!showPassword)}
-                          className="h-4 text-slate-500 hover:text-slate-700 transition-colors"
+                          className="h-4 text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 576 512"
@@ -160,7 +162,7 @@ function Login() {
                         </svg>
                       ) : (
                         <svg
-                          className="h-4 text-slate-500 hover:text-slate-700 transition-colors"
+                          className="h-4 text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
                           onClick={() => setShowPassword(!showPassword)}
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"

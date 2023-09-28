@@ -8,6 +8,7 @@ using API.Extensions;
 using API.RequestHelpers;
 using API.Services;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -86,13 +87,12 @@ public partial class AttendanceController : BaseApiController
             Email = payload.Email,
             FirstName = payload.GivenName,
             LastName = payload.FamilyName,
-            Session = session,
             MATNumber = MyRegex().Match(payload.Email).Value ?? "000000"
             // MATNumber = Regex.Match(payload.Email, @"\d+").Value ?? "000000"
 
         };
 
-        _context.Attendees.Add(attendee);
+        session.Attendees.Add(attendee);
         var saved = await _context.SaveChangesAsync();
 
         if (saved < 1)
@@ -131,7 +131,18 @@ public partial class AttendanceController : BaseApiController
         return _mapper.Map<SessionAttendeesDto>(session);
     }
 
+    [Authorize]
+    [HttpGet("getAllSessionAttendees/{sessionId}")]
+    public async Task<ActionResult<List<AttendeeDto>>> GetAllSessionAttendees(string sessionId)
+    {
+        var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
+        return await _context.Attendees
+            .Where(x => x.Session.Id == Guid.Parse(sessionId) && x.Session.Host == user)
+            .AsNoTracking()
+            .ProjectTo<AttendeeDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 
     [GeneratedRegex("\\d+")]
     private static partial Regex MyRegex();

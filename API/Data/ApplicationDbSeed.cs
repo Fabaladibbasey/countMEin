@@ -68,8 +68,7 @@ namespace API.Data
                         {
                             new Attendee
                             {
-                               Id = 1,
-                                 FirstName = "Bob",
+                                    FirstName = "Bob",
                                     LastName = "Bobbity",
                                     Email = "bob@exampl.com",
                                     MATNumber = "123456",
@@ -77,7 +76,6 @@ namespace API.Data
                             },
                             new Attendee
                             {
-                                Id = 2,
                                 FirstName = "Tom",
                                 LastName = "Tommy",
                                 Email = "tom@example.com",
@@ -86,7 +84,6 @@ namespace API.Data
                             },
                             new Attendee
                             {
-                                Id = 3,
                                 FirstName = "Jane",
                                 LastName = "Janey",
                                 Email = "jane@example.com",
@@ -104,7 +101,6 @@ namespace API.Data
                         {
                             new Attendee
                             {
-                                Id = 4,
                                 FirstName = "Bob",
                                 LastName = "Bobbity",
                                 Email = "bob@example.com",
@@ -113,7 +109,6 @@ namespace API.Data
                             },
                             new Attendee
                             {
-                                Id = 5,
                                 FirstName = "Tom",
                                 LastName = "Tommy",
                                 Email = "tom@tommy.tom",

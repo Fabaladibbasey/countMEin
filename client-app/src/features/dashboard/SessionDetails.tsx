@@ -8,7 +8,8 @@ import agent from "../../app/api/agent";
 import { MetaData } from "../../app/models/pagination";
 import { getAxiosParams } from "../../app/utils";
 import { formatDistanceToNow, format } from "date-fns";
-import axios from "axios";
+import autoTable from "jspdf-autotable";
+import jsPDF from "jspdf";
 
 function SessionDetails() {
   const [sessionDetails, setSessionDetails] = useState<SessionAttendees>();
@@ -84,21 +85,22 @@ function SessionDetails() {
         link.click();
         link.remove();
       } else {
-        axios.defaults.baseURL = import.meta.env.VITE_API_URL;
-        let response = await axios.get(`/Attendance/ExportToPDF/${id}`, {
-          responseType: "arraybuffer",
-          headers: {
-            Accept: "application/pdf",
-          },
+        const attendees = await agent.Attendance.getAllSessionAttendees(id!);
+
+        const doc = new jsPDF();
+
+        autoTable(doc, {
+          headStyles: { fillColor: "#616161" },
+          head: [["First Name", "Last Name", "Email", "MATNumber"]],
+          body: attendees.map((attendee) => [
+            attendee.firstName,
+            attendee.lastName,
+            attendee.email,
+            attendee.matNumber,
+          ]),
         });
 
-        const url = URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", sessionDetails?.sessionName! + ".pdf");
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        doc.save(sessionDetails?.sessionName! + ".pdf");
       }
     } catch (error) {
       console.log(error);

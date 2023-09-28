@@ -99,16 +99,7 @@ function Home() {
         console.log("Prompt was dismissed");
       }
     });
-  }, [
-    sessionInfo,
-    createAttendee,
-    setLoading,
-    setAttendee,
-    navigate,
-    localStorage,
-    window.location.search,
-    agent.Attendance,
-  ]);
+  }, [createAttendee]);
 
   async function createAttendee(response: any) {
     try {
