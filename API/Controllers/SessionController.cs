@@ -99,7 +99,7 @@ public class SessionController : BaseApiController
 
         var session = await _context.Sessions
             .Include(x => x.Host)
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.UpdatedAt)
             .FirstOrDefaultAsync(x => x.Host == user);
 
         if (session == null || session.SessionExpiresAt < DateTime.UtcNow)
