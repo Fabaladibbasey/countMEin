@@ -5,6 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginFormSchema } from "./accountFormSchema";
 import agent from "../../app/api/agent";
 import { User } from "../../app/models/user";
+import AppLoading from "../../app/components/AppLoading";
+
+declare var google: any;
 
 function Login() {
   const navigate = useNavigate();
@@ -36,16 +39,20 @@ function Login() {
     }
   };
 
+  if (typeof google === "undefined") {
+    return (
+      <AppLoading text="App loading... If this is taking too long, please refresh!" />
+    );
+  }
+
   //google login
   useEffect(() => {
-    // @ts-ignore
     google.accounts.id.initialize({
       client_id:
         "559758667407-k0a5jbbmsabs5v5e6carbuj4md1tluao.apps.googleusercontent.com",
       callback: googleLogin,
     });
 
-    // @ts-ignore
     google.accounts.id.renderButton(
       document.getElementById("buttonDiv"),
       {
@@ -64,7 +71,6 @@ function Login() {
       } // customization attributes
     );
 
-    // @ts-ignore
     google.accounts.id.prompt((notification: any) => {
       if (notification.isNotDisplayed()) {
         console.log("Prompt was not displayed");
