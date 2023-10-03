@@ -3,15 +3,6 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0.203 AS build-env
 WORKDIR /app
 EXPOSE 8080
 
-# Install fonts
-RUN apt-get update && apt-get install -y fonts-liberation
-
-# install fontconfig
-RUN apt-get update; apt-get install -y fontconfig
-
-# refresh system font cache
-RUN fc-cache -f -v
-
 # Copy csproj and restore as distinct layers
 COPY *.csproj ./
 RUN dotnet restore
