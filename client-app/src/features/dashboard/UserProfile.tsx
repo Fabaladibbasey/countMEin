@@ -31,7 +31,7 @@ function UserProfile() {
   function refreshTokenTimer(user: User) {
     const jwtToken = JSON.parse(atob(user.token.split(".")[1]));
     const expires = new Date(jwtToken.exp * 1000);
-    const timeout = expires.getTime() - (Date.now() - 5 * 1000 * 60);
+    const timeout = expires.getTime() - Date.now() - 5 * 1000 * 60;
     refreshTokenTimeout = setTimeout(refreshToken, timeout);
   }
 

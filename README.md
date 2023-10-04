@@ -48,12 +48,14 @@
 1. - [x] **Pagination, Sorting, and Filtering Implementation**
 1. - [x] **Export Functionality for Attendee Data in PDF, Excel, or CSV**
 1. - [x] **Exception Handling and Error Handling**
-1. - [ ] **Initial Staging Version Deployment**
+1. - [x] **Initial Staging Version Deployment**
 1. - [ ] **UI Enhancement**
 1. - [ ] **Conversion to a Progressive Web App (PWA)**
 1. - [ ] **Final Polish and Cleanup**
 1. - [ ] **Miscellaneous Tasks**
 1. - [ ] **Real-time Notifications for New Attendees**
 1. - [ ] **Grouping and merging sessions/events**
+
+[Click here for additional information about Miscellaneous Tasks.](https://docs.google.com/spreadsheets/d/1MhQsTLw1iU-diATmXUAK22QooYWYbuo9gMkOWGM-_x8/edit?usp=sharing)
 
 ...

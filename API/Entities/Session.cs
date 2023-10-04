@@ -14,6 +14,7 @@ public class Session
     [Required]
     public DateTime SessionExpiresAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool RegenerateLinkToken { get; set; } = true;
     public int LinkExpiryFreequency { get; set; } = 30;
     public List<Attendee> Attendees { get; set; } = new List<Attendee>();

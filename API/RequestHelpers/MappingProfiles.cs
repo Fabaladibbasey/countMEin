@@ -2,7 +2,6 @@ using API.DTOs;
 using API.Entities;
 using API.Enums;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
 namespace API.RequestHelpers;
 
@@ -37,6 +36,14 @@ public class MappingProfiles : Profile
         .ForMember(d => d.Status, o => o.MapFrom(s => s.SessionExpiresAt > DateTime.UtcNow ? SessionStatus.Active.ToString() : SessionStatus.Expired.ToString()))
         .ForMember(d => d.SessionExpiresAt, o => o.MapFrom(s => s.SessionExpiresAt));
         // .ForMember(d => d.Attendees, o => o.MapFrom(s => s.Attendees.AsQueryable().ProjectTo<AttendeeDto>(_mapper.ConfigurationProvider)));
+
+        CreateMap<CreateSessionDto, Session>()
+        .ForMember(d => d.SessionName, o => o.MapFrom(s => s.SessionName))
+        .ForMember(d => d.SessionExpiresAt, o => o.MapFrom(s => s.SessionExpiresAt.ToUniversalTime()))
+        .ForMember(d => d.LinkExpiryFreequency, o => o.MapFrom(s => s.LinkExpiryFreequency < 30 ? 30 : s.LinkExpiryFreequency))
+        .ForMember(d => d.RegenerateLinkToken, o => o.MapFrom(s => s.RegenerateLinkToken))
+        .ForMember(d => d.Host, o => o.MapFrom((s, d, _, ctx) => ctx.Items["AppUser"]))
+        .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => DateTime.UtcNow));
 
         CreateMap<AppUser, UserDto>()
         .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.FirstName + " " + s.LastName))
