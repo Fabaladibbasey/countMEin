@@ -35,14 +35,7 @@ public class SessionController : BaseApiController
     {
         var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
-        var session = new Session
-        {
-            SessionName = createSessionDto.SessionName,
-            SessionExpiresAt = DateTime.UtcNow.AddMinutes(30),
-            Host = user!,
-            LinkExpiryFreequency = createSessionDto.LinkExpiryFreequency < 30 ? 30 : createSessionDto.LinkExpiryFreequency,
-            RegenerateLinkToken = createSessionDto.RegenerateLinkToken,
-        };
+        var session = _mapper.Map<Session>(createSessionDto, opt => opt.Items["AppUser"] = user);
 
         _context.Sessions.Add(session);
         await _context.SaveChangesAsync();
@@ -129,7 +122,7 @@ public class SessionController : BaseApiController
 
         var session = await _context.Sessions
             .Include(x => x.Host)
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.UpdatedAt)
             .FirstOrDefaultAsync(x => x.Host == user);
 
         if (session == null || session.SessionExpiresAt < DateTime.UtcNow)
@@ -195,12 +188,9 @@ public class SessionController : BaseApiController
 
         if (session == null) return Unauthorized();
 
-        session.SessionName = request.SessionName;
-        session.SessionExpiresAt = request.SessionExpiresAt.ToUniversalTime();
-        session.LinkExpiryFreequency = request.LinkExpiryFreequency < 30 ? 30 : request.LinkExpiryFreequency;
-        session.RegenerateLinkToken = request.RegenerateLinkToken;
+        var updatedSession = _mapper.Map(request, session, opt => opt.Items["AppUser"] = user);
 
-        _context.Update(session);
+        _context.Update(updatedSession);
         var updated = await _context.SaveChangesAsync() > 0;
 
         if (!updated) return BadRequest("Failed to update session");
