@@ -84,7 +84,8 @@ public class TokenService
         rng.GetBytes(randomNumber);
         return new RefereshAppUserToken
         {
-            Token = Convert.ToBase64String(randomNumber)
+            Token = Convert.ToBase64String(randomNumber),
+            Expires = DateTime.UtcNow.AddMinutes(15)
         };
     }
 
