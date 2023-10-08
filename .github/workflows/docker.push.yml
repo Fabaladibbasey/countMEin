@@ -25,7 +25,7 @@ jobs:
           push: true
           tags: fabala/countmein:latest
   deploy:
-    needs: migrate
+    needs: docker
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +35,7 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
   migrate:
-    needs: docker
+    needs: deploy
     name: Run database migrations
     runs-on: ubuntu-latest
     steps:
