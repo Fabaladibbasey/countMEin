@@ -4,7 +4,7 @@
 #
 
 app = "countmein"
-primary_region = "lhr"
+primary_region = "cdg"
 
 [build]
   image = "fabala/countmein:latest"
