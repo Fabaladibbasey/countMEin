@@ -49,7 +49,7 @@ jobs:
 
       # Install Entity Framework Core Tools
       - name: Install EF Core Tools
-        run: dotnet tool install --global dotnet-ef --version 7.0.4
+        run: dotnet tool install --global dotnet-ef --version 7.0.11
 
       # Restore dependencies and build the project
       - name: Restore and build
@@ -60,6 +60,6 @@ jobs:
       # Run Entity Framework Core migrations
       - name: Run EF Core Migrations
         run: |
-          dotnet ef database update --project ${{ github.workspace }}/API/API.csproj --startup-project ${{ github.workspace }}/API/API.csproj
+          dotnet ef database update --project ${{ github.workspace }}/API/API.csproj --startup-project ${{ github.workspace }}/API/API.csproj --configuration Release --no-build -- --connection-string ${{ secrets.DATABASE_URL }}
         env:
           ASPNETCORE_ENVIRONMENT: Production
