@@ -10,9 +10,27 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
+        if (!optionsBuilder.IsConfigured
+            && Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development"
+            && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE_URL")))
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Database=countMEin;Username=postgres;Password=1234");
+            // Use connection string provided at runtime by FlyIO.
+            var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            // Parse connection URL to connection string for Npgsql
+            connUrl = connUrl.Replace("postgres://", string.Empty);
+            string pgUserPass = connUrl.Split("@")[0];
+            string pgHostPortDb = connUrl.Split("@")[1];
+            string pgHostPort = pgHostPortDb.Split("/")[0];
+            string pgDb = pgHostPortDb.Split("/")[1];
+            string pgUser = pgUserPass.Split(":")[0];
+            string pgPass = pgUserPass.Split(":")[1];
+            string pgHost = pgHostPort.Split(":")[0];
+            string pgPort = pgHostPort.Split(":")[1];
+            string updatedHost = pgHost.Replace("flycast", "internal");
+
+            var connString = $"Server={updatedHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}";
+            optionsBuilder.UseNpgsql(connString);
         }
     }
 
