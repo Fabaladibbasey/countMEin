@@ -60,6 +60,6 @@ jobs:
       # Run Entity Framework Core migrations
       - name: Run EF Core Migrations
         run: |
-          dotnet ef database update --project ../../API
+          dotnet ef database update --project ${{ github.workspace }}/API/API.csproj --startup-project ${{ github.workspace }}/API/API.csproj
         env:
           ASPNETCORE_ENVIRONMENT: Production
