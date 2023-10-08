@@ -11,7 +11,6 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured
-            && Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development"
             && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DATABASE_URL")))
         {
             // Use connection string provided at runtime by FlyIO.
