@@ -7,6 +7,15 @@ namespace API.Data;
 public class ApplicationDbContext : IdentityDbContext<AppUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql("Host=localhost;Database=countMEin;Username=postgres;Password=1234");
+        }
+    }
+
     public DbSet<Attendee> Attendees { get; set; }
     public DbSet<Session> Sessions { get; set; }
 
